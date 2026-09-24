@@ -14,21 +14,23 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
 
-      - name: Show Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          ls "$ANDROID_HOME"
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Accept Android SDK licenses
-        run: |
-          yes | sdkmanager --licenses > /dev/null || true
+      - name: Sync Capacitor Android
+        run: npx cap sync android
 
       - name: Make Gradle executable
         working-directory: android
@@ -42,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: My-Tasks-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apkS
